@@ -14,6 +14,8 @@ with the track playing in Apple Music.
 - Update the status only when the track changes.
 - Keep the last status when playback stops.
 
+<img width="1904" height="1061" alt="image" src="https://github.com/user-attachments/assets/74457b05-8b46-4f8e-afc6-12d804baf4f1" />
+
 ## Who is it for?
 
 For anyone who wants to share their vibe with the crowd.
@@ -26,7 +28,7 @@ Requires macOS, Python 3, and the Music app.
 2. Install the dependency: `python3 -m pip install requests`.
 3. Create a [personal access token (classic)](https://github.com/settings/tokens/new)
    with the `user` scope.
-4. Create `config.json` next to `Beat2Git.py` and enter your token:
+4. Create `config.json` next to `Beat2Git.py` and enter your token (CLASSIC!):
 
    ```json
    {
