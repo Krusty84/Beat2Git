@@ -1,1 +1,46 @@
 # Beat2Git
+
+Share what you're listening to on Apple Music with the GitHub community.
+
+## What Is This?
+
+Beat2Git is a Python script for macOS. It updates your GitHub profile status
+with the track playing in Apple Music.
+
+## Features
+
+- Show the artist and track title (no more than 80 symbols, GitHub constraints) with a music emoji.
+- Set a custom playback check interval (default: 30 seconds).
+- Update the status only when the track changes.
+- Keep the last status when playback stops.
+
+## Who is it for?
+
+For anyone who wants to share their vibe with the crowd.
+
+## How to install and use
+
+Requires macOS, Python 3, and the Music app.
+
+1. Download this project and open its folder in Terminal.
+2. Install the dependency: `python3 -m pip install requests`.
+3. Create a [personal access token (classic)](https://github.com/settings/tokens/new)
+   with the `user` scope.
+4. Create `config.json` next to `Beat2Git.py` and enter your token:
+
+   ```json
+   {
+     "github_classic_token": "YOUR_GITHUB_TOKEN"
+   }
+   ```
+
+5. Run: `python3 Beat2Git.py`.
+
+Use `--interval` to set the check interval in seconds. Enter a positive integer:
+
+```sh
+python3 Beat2Git.py --interval 60
+```
+
+When macOS asks, allow access to Music and System Events.
+Play a track in Music and keep the script running. Press `Ctrl+C` to stop.
