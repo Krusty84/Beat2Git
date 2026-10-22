@@ -17,7 +17,7 @@ STATUS_EMOJI = ":musical_note:"  # Status emoji
 GITHUB_GRAPHQL_URL = "https://api.github.com/graphql"
 
 # Read the current track only while Music is playing.
-APPLE_SCRIPT = '''
+getCurrentAppleMusicTrack = '''
 tell application "System Events"
     set isRunning to exists (processes where name is "Music")
 end tell
@@ -38,7 +38,7 @@ end if
 def get_apple_music_track():
     try:
         result = subprocess.run(
-            ['osascript', '-e', APPLE_SCRIPT],
+            ['osascript', '-e', getCurrentAppleMusicTrack],
             capture_output=True, text=True, check=True, timeout=10,
         )
         return result.stdout.strip() or "NOT_PLAYING"
