@@ -28,15 +28,10 @@ Requires macOS, Python 3, and the Music app.
 2. Install the dependency: `python3 -m pip install requests`.
 3. Create a [personal access token (classic)](https://github.com/settings/tokens/new)
    with the `user` scope.
-4. Create `config.json` next to `Beat2Git.py` and enter your token (CLASSIC!):
-
-   ```json
-   {
-     "github_classic_token": "YOUR_GITHUB_TOKEN"
-   }
-   ```
-
-5. Run: `python3 Beat2Git.py`.
+4. Run: `python3 Beat2Git.py`.
+5. On the first run, enter your GitHub classic token when prompted. 
+   The script creates `config.json` next to `Beat2Git.py` and starts syncing.
+   Later runs use the saved token without prompting.
 
 Use `--interval` to set the check interval in seconds. Enter a positive integer:
 

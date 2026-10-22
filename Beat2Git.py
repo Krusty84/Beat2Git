@@ -3,8 +3,11 @@
 
 import argparse
 import json
+import os
 import subprocess
 import time
+import warnings
+from getpass import GetPassWarning, getpass
 from pathlib import Path
 
 import requests
@@ -34,6 +37,36 @@ else
     return "NOT_PLAYING"
 end if
 '''
+
+def load_github_token(config_path):
+    try:
+        with config_path.open(encoding='utf-8') as config_file:
+            config = json.load(config_file)
+    except FileNotFoundError:
+        print("No config.json found. Enter your GitHub personal access token (classic).")
+        while True:
+            with warnings.catch_warnings():
+                warnings.simplefilter('error', GetPassWarning)
+                github_token = getpass("GitHub token: ").strip()
+            if github_token:
+                break
+            print("Token must not be empty.")
+
+        config_fd = os.open(config_path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+        try:
+            with os.fdopen(config_fd, 'w', encoding='utf-8') as config_file:
+                json.dump({'github_classic_token': github_token}, config_file, indent=2)
+                config_file.write('\n')
+        except BaseException:
+            config_path.unlink()
+            raise
+        print(f"Configuration saved to {config_path}.")
+        return github_token
+
+    github_token = config.get('github_classic_token') if isinstance(config, dict) else None
+    if not isinstance(github_token, str) or not github_token.strip():
+        raise ValueError("config.json must contain a non-empty github_classic_token string.")
+    return github_token.strip()
 
 def get_apple_music_track():
     try:
@@ -91,8 +124,14 @@ def main():
     if args.interval <= 0:
         parser.error('--interval must be greater than 0')
 
-    with Path(__file__).resolve().with_name('config.json').open(encoding='utf-8') as config_file:
-        github_token = json.load(config_file)['github_classic_token']
+    try:
+        github_token = load_github_token(Path(__file__).resolve().with_name('config.json'))
+    except (KeyboardInterrupt, EOFError):
+        parser.exit(1, "Configuration cancelled.\n")
+    except GetPassWarning:
+        parser.exit(1, "Cannot hide token input. Run Beat2Git in a terminal.\n")
+    except (OSError, ValueError) as e:
+        parser.exit(1, f"Configuration error: {e}\n")
 
     last_status = None
     print("Beat2Git - Share what you're listening to on Apple Music with the GitHub community.")
