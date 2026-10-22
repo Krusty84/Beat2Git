@@ -9,7 +9,7 @@ with the track playing in Apple Music.
 
 ## Features
 
-- Show the artist and track title (no more than 80 symbols, GitHub constraints) with a music emoji.
+- Show the artist and track title (no more than 80 symbols, GitHub constraints) with a custom or random emoji.
 - Set a custom playback check interval (default: 30 seconds).
 - Update the status only when the track changes.
 - Keep the last status when playback stops.
@@ -32,6 +32,18 @@ Requires macOS, Python 3, and the Music app.
 5. On the first run, enter your GitHub classic token when prompted. 
    The script creates `config.json` next to `Beat2Git.py` and starts syncing.
    Later runs use the saved token without prompting.
+
+Set `status_emoji` in `config.json` to choose the status emoji:
+
+```json
+{
+  "github_classic_token": "YOUR_GITHUB_TOKEN",
+  "status_emoji": ":musical_note:"
+}
+```
+
+Use a fixed emoji such as `":headphones:"`, or set `"status_emoji": "random"`
+to select a random GitHub emoji when the track changes.
 
 Use `--interval` to set the check interval in seconds. Enter a positive integer:
 

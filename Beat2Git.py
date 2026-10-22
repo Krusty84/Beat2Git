@@ -4,6 +4,7 @@
 import argparse
 import json
 import os
+import random
 import subprocess
 import time
 import warnings
@@ -14,9 +15,9 @@ import requests
 
 # === SETTINGS ===
 CHECK_INTERVAL = 30  # Track check interval (seconds)
-STATUS_EMOJI = ":musical_note:"  # Status emoji
 # =================
 
+DEFAULT_STATUS_EMOJI = ":musical_note:"
 GITHUB_GRAPHQL_URL = "https://api.github.com/graphql"
 
 # Read the current track only while Music is playing.
@@ -38,7 +39,7 @@ else
 end if
 '''
 
-def load_github_token(config_path):
+def load_config(config_path):
     try:
         with config_path.open(encoding='utf-8') as config_file:
             config = json.load(config_file)
@@ -52,21 +53,36 @@ def load_github_token(config_path):
                 break
             print("Token must not be empty.")
 
+        config = {'github_classic_token': github_token, 'status_emoji': DEFAULT_STATUS_EMOJI}
         config_fd = os.open(config_path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
         try:
             with os.fdopen(config_fd, 'w', encoding='utf-8') as config_file:
-                json.dump({'github_classic_token': github_token}, config_file, indent=2)
+                json.dump(config, config_file, indent=2)
                 config_file.write('\n')
         except BaseException:
             config_path.unlink()
             raise
         print(f"Configuration saved to {config_path}.")
-        return github_token
 
     github_token = config.get('github_classic_token') if isinstance(config, dict) else None
     if not isinstance(github_token, str) or not github_token.strip():
         raise ValueError("config.json must contain a non-empty github_classic_token string.")
-    return github_token.strip()
+    status_emoji = config.get('status_emoji', DEFAULT_STATUS_EMOJI)
+    if not isinstance(status_emoji, str) or not status_emoji.strip():
+        raise ValueError("config.json status_emoji must be a non-empty string.")
+    return github_token.strip(), status_emoji.strip()
+
+def load_github_emojis():
+    try:
+        response = requests.get('https://api.github.com/emojis', timeout=10)
+        response.raise_for_status()
+        emojis = response.json()
+        if not isinstance(emojis, dict) or not emojis:
+            raise ValueError("GitHub returned an empty or invalid emoji list.")
+        return [f":{name}:" for name in emojis]
+    except (requests.RequestException, ValueError) as e:
+        print(f"Warning: Could not load GitHub emojis: {e}. Using {DEFAULT_STATUS_EMOJI} until restart.")
+        return [DEFAULT_STATUS_EMOJI]
 
 def get_apple_music_track():
     try:
@@ -125,7 +141,7 @@ def main():
         parser.error('--interval must be greater than 0')
 
     try:
-        github_token = load_github_token(Path(__file__).resolve().with_name('config.json'))
+        github_token, status_emoji = load_config(Path(__file__).resolve().with_name('config.json'))
     except (KeyboardInterrupt, EOFError):
         parser.exit(1, "Configuration cancelled.\n")
     except GetPassWarning:
@@ -133,6 +149,7 @@ def main():
     except (OSError, ValueError) as e:
         parser.exit(1, f"Configuration error: {e}\n")
 
+    random_emojis = load_github_emojis() if status_emoji == 'random' else None
     last_status = None
     print("Beat2Git - Share what you're listening to on Apple Music with the GitHub community.")
     print("Copyright (c) 2026 Alexey Sedoykin. MIT License.")
@@ -144,7 +161,8 @@ def main():
         if current_track != "NOT_PLAYING" and current_track != last_status:
             # GitHub limits status
             short_status = (current_track[:77] + '...') if len(current_track) > 80 else current_track
-            if change_github_status(message=short_status, emoji=STATUS_EMOJI, github_token=github_token):
+            emoji = random.choice(random_emojis) if random_emojis else status_emoji
+            if change_github_status(message=short_status, emoji=emoji, github_token=github_token):
                 last_status = current_track
                 
         time.sleep(args.interval)
