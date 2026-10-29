@@ -51,5 +51,18 @@ Use `--interval` to set the check interval in seconds. Enter a positive integer:
 python3 Beat2Git.py --interval 60
 ```
 
+## How to start Music.app with Beat2Git
+
+Use **Automator.app**
+
+```sh
+open -a Music
+cd P_A_T_H_T_O/Beat2Git || exit 1
+/Library/Frameworks/Python.framework/Versions/3.13/bin/python3 \
+    Beat2Git.py > /dev/null 2>&1 &
+```
+
+<img width="1282" height="450" alt="image" src="https://github.com/user-attachments/assets/3e78ee59-ed8e-411f-b1f9-042d0a2719e1" />
+
 When macOS asks, allow access to Music and System Events.
 Play a track in Music and keep the script running. Press `Ctrl+C` to stop.
