@@ -76,7 +76,16 @@ export async function GET() {
     if (!response.ok) throw new Error(`GitHub HTTP ${response.status}`);
 
     const result = await response.json();
-    if (result.errors?.length || !result.data?.user) {
+    if (!response.ok) {
+      console.error("GitHub HTTP:", response.status, result);
+      throw new Error(`GitHub HTTP ${response.status}`);
+    }
+
+    if (result.errors?.length) {
+      console.error(
+        "GitHub GraphQL errors:",
+        JSON.stringify(result.errors, null, 2),
+      );
       throw new Error("GitHub GraphQL response error");
     }
 
