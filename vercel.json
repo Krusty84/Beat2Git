@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/current_track.svg",
+      "destination": "/serverless_functions/vercel/current_track"
+    }
+  ]
+}
