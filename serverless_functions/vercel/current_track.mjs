@@ -1,6 +1,13 @@
+/*
+ * SPDX-FileCopyrightText: Copyright (c) 2026 Alexey Sedoykin
+ * SPDX-License-Identifier: MIT
+ */
+
 const QUERY = `query($login: String!) {
   user(login: $login) {
-    status { message organization { login } }
+    status {
+      message
+    }
   }
 }`;
 
@@ -58,8 +65,11 @@ function makeSvg(message) {
 export async function GET() {
   const login = process.env.GITHUB_LOGIN?.trim();
   const token = process.env.GITHUB_TOKEN;
+
   if (!token || !login) {
-    return new Response("GITHUB_TOKEN or LOGIN is missing", { status: 503 });
+    return new Response("GITHUB_TOKEN or GITHUB_LOGIN is missing", {
+      status: 503,
+    });
   }
 
   try {
@@ -70,14 +80,17 @@ export async function GET() {
         "Content-Type": "application/json",
         "User-Agent": "Beat2Git-Vercel-SVG",
       },
-      body: JSON.stringify({ query: QUERY, variables: { login } }),
+      body: JSON.stringify({
+        query: QUERY,
+        variables: { login },
+      }),
       signal: AbortSignal.timeout(5000),
     });
-    if (!response.ok) throw new Error(`GitHub HTTP ${response.status}`);
 
     const result = await response.json();
+
     if (!response.ok) {
-      console.error("GitHub HTTP:", response.status, result);
+      console.error("GitHub HTTP error:", response.status, result);
       throw new Error(`GitHub HTTP ${response.status}`);
     }
 
@@ -89,13 +102,15 @@ export async function GET() {
       throw new Error("GitHub GraphQL response error");
     }
 
-    const status = result.data.user.status;
     const message =
-      status?.organization == null && typeof status?.message === "string"
-        ? status.message.trim()
+      typeof result.data?.user?.status?.message === "string"
+        ? result.data.user.status.message.trim()
         : "";
 
-    return new Response(makeSvg(message), { status: 200, headers: HEADERS });
+    return new Response(makeSvg(message), {
+      status: 200,
+      headers: HEADERS,
+    });
   } catch (error) {
     console.error("Beat2Git SVG error:", error);
     return new Response("Unable to load GitHub status", {
