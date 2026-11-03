@@ -52,13 +52,43 @@ function makeSvg(message) {
   const subtitle =
     artist || (message ? "GitHub status" : "Beat2Git · Apple Music");
 
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="640" height="104" viewBox="0 0 640 104" role="img">
-    <rect width="640" height="104" rx="14" fill="#101827"/>
-    <rect x="18" y="20" width="64" height="64" rx="12" fill="#25354d"/>
-    <text x="50" y="63" text-anchor="middle" fill="#70e6c3" font-family="Arial,sans-serif" font-size="36">♫</text>
-    <text x="100" y="34" fill="#70e6c3" font-family="Arial,sans-serif" font-size="11">BEAT2GIT · LAST TRACK</text>
-    <text x="100" y="61" fill="#ffffff" font-family="Arial,sans-serif" font-size="19" font-weight="bold">${clip(title, 42)}</text>
-    <text x="100" y="83" fill="#a6b3c8" font-family="Arial,sans-serif" font-size="13">${clip(subtitle, 57)}</text>
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="640" height="120" viewBox="0 0 640 120" role="img" aria-label="Current track">
+    <defs>
+      <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+        <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#000000" flood-opacity="0.16"/>
+      </filter>
+    </defs>
+
+    <!-- Background SVG -->
+    <rect width="640" height="120" fill="transparent"/>
+
+    <!-- Card -->
+    <rect x="8" y="8" width="624" height="104" rx="18"
+      fill="#0b1220"
+      stroke="#d0d7de"
+      stroke-opacity="0.18"
+      filter="url(#shadow)"/>
+
+    <!-- Icon -->
+    <rect x="28" y="28" width="64" height="64" rx="14" fill="#23324d"/>
+    <text x="60" y="71" text-anchor="middle"
+      fill="#6ee7c8" font-family="Arial,sans-serif" font-size="36">♫</text>
+
+    <!-- Text -->
+    <text x="110" y="42"
+      fill="#5eead4" font-family="Arial,sans-serif" font-size="11" font-weight="bold">
+      BEAT2GIT · LAST TRACK
+    </text>
+
+    <text x="110" y="72"
+      fill="#ffffff" font-family="Arial,sans-serif" font-size="19" font-weight="bold">
+      ${clip(title, 42)}
+    </text>
+
+    <text x="110" y="95"
+      fill="#a9b7cc" font-family="Arial,sans-serif" font-size="13">
+      ${clip(subtitle, 57)}
+    </text>
   </svg>`;
 }
 
