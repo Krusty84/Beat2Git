@@ -66,3 +66,23 @@ cd P_A_T_H_T_O/Beat2Git || exit 1
 
 When macOS asks, allow access to Music and System Events.
 Play a track in Music and keep the script running. Press `Ctrl+C` to stop.
+
+## How to add a Beat2Git badge to the README.md of your profile
+
+1. Fork me [Beat2Git repository](https://github.com/Krusty84/Beat2Git) to your GitHub account.
+2. Deploy your fork on [Vercel](https://vercel.com/new) and configure the environment variables:
+   - `GITHUB_TOKEN` — your GitHub personal access token with `read:user` scope.
+   - `GITHUB_LOGIN` — your GitHub username.
+3. Add the following Markdown to your GitHub profile `README.md`:
+
+   ```html
+   <p align="center">
+   <img
+     src="https://YOUR-PROJECT.vercel.app/current_track.svg"
+     alt="Current Track"
+     width="340"
+   />
+   </p>
+   ```
+
+   Replace `YOUR-PROJECT` with your Vercel project name.
