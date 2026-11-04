@@ -43,52 +43,47 @@ function clip(value, max) {
 
 function makeSvg(message) {
   const separator = message?.indexOf(" — ") ?? -1;
+
   const artist = separator >= 0 ? message.slice(0, separator) : "";
+
   const title = message
     ? separator >= 0
       ? message.slice(separator + 3)
       : message
     : "No music status";
-  const subtitle =
-    artist || (message ? "GitHub status" : "Beat2Git · Apple Music");
 
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="640" height="120" viewBox="0 0 640 120" role="img" aria-label="Current track">
-    <defs>
-      <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
-        <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#000000" flood-opacity="0.16"/>
-      </filter>
-    </defs>
+  const subtitle = artist || "Beat2Git";
 
-    <!-- Background SVG -->
-    <rect width="640" height="120" fill="transparent"/>
+  return `<svg xmlns="http://www.w3.org/2000/svg"
+    width="400" height="64" viewBox="0 0 400 64"
+    role="img" aria-label="Current/Last Track">
 
-    <!-- Card -->
-    <rect x="8" y="8" width="624" height="104" rx="18"
-      fill="#0b1220"
-      stroke="#d0d7de"
-      stroke-opacity="0.18"
-      filter="url(#shadow)"/>
+    <rect x="0.5" y="0.5"
+      width="399" height="63" rx="10"
+      fill="#f6f8fa" stroke="#d0d7de"/>
 
-    <!-- Icon -->
-    <rect x="28" y="28" width="64" height="64" rx="14" fill="#23324d"/>
-    <text x="60" y="71" text-anchor="middle"
-      fill="#6ee7c8" font-family="Arial,sans-serif" font-size="36">♫</text>
+    <text x="16" y="41"
+      font-family="Arial,sans-serif"
+      font-size="24" fill="#57606a">♫</text>
 
-    <!-- Text -->
-    <text x="110" y="42"
-      fill="#5eead4" font-family="Arial,sans-serif" font-size="11" font-weight="bold">
-      BEAT2GIT · LAST TRACK
-    </text>
+    <rect x="48" y="10" width="118" height="16" rx="8"
+      fill="#ddf4ff" stroke="#b6e3ff"/>
+    <text x="107" y="21"
+      text-anchor="middle"
+      font-family="Arial,sans-serif"
+      font-size="9" font-weight="700"
+      fill="#0969da">Current/Last Track</text>
 
-    <text x="110" y="72"
-      fill="#ffffff" font-family="Arial,sans-serif" font-size="19" font-weight="bold">
-      ${clip(title, 42)}
-    </text>
+    <text x="48" y="41"
+      font-family="Arial,sans-serif"
+      font-size="14" font-weight="600"
+      fill="#24292f">${clip(title, 34)}</text>
 
-    <text x="110" y="95"
-      fill="#a9b7cc" font-family="Arial,sans-serif" font-size="13">
-      ${clip(subtitle, 57)}
-    </text>
+    <text x="48" y="56"
+      font-family="Arial,sans-serif"
+      font-size="12"
+      fill="#57606a">${clip(subtitle, 42)}</text>
+
   </svg>`;
 }
 
